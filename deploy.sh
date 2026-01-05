@@ -25,12 +25,19 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
+# 确定 docker compose 命令
+DOCKER_COMPOSE=""
+if docker compose version &> /dev/null; then
+    DOCKER_COMPOSE="docker compose"
+elif command -v docker-compose &> /dev/null; then
+    DOCKER_COMPOSE="docker-compose"
+else
     echo -e "${RED}❌ Docker Compose 未安装${NC}"
     exit 1
 fi
 
 echo -e "${GREEN}✅ Docker 已安装${NC}"
+echo -e "${GREEN}✅ 使用: $DOCKER_COMPOSE${NC}"
 
 # 检查 Node.js
 if ! command -v node &> /dev/null; then
@@ -49,7 +56,7 @@ mkdir -p data/postgres data/ipfs
 # 启动 Docker 服务
 echo ""
 echo "🐳 启动 Docker 服务..."
-docker-compose up -d
+$DOCKER_COMPOSE up -d
 
 # 等待服务启动
 echo ""
@@ -59,7 +66,7 @@ sleep 30
 # 检查服务状态
 echo ""
 echo "🔍 检查服务状态..."
-docker-compose ps
+$DOCKER_COMPOSE ps
 
 # 安装 npm 依赖
 echo ""
@@ -98,8 +105,8 @@ echo "🎮 GraphQL Playground:"
 echo "   http://localhost:8000/subgraphs/name/eagle-swap/pancakeswap/graphql"
 echo ""
 echo "📈 查看日志:"
-echo "   docker-compose logs -f graph-node"
+echo "   $DOCKER_COMPOSE logs -f graph-node"
 echo ""
 echo "🛑 停止服务:"
-echo "   docker-compose down"
+echo "   $DOCKER_COMPOSE down"
 echo ""
