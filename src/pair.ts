@@ -13,6 +13,8 @@ let FACTORY_ADDRESS = '0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73'
 let USDT_ADDRESS = '0x55d398326f99059ff775485246999027b3197955'
 let BUSD_ADDRESS = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
 let USDC_ADDRESS = '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d'
+let USD1_ADDRESS = '0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d'
+let USDS_ADDRESS = '0xce24439f2d9c6a2289f741120fe202248b666666'
 let WBNB_ADDRESS = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
 
 function exponentToBigDecimal(decimals: BigInt): BigDecimal {
@@ -68,10 +70,10 @@ export function handleSync(event: Sync): void {
     let token0Address = token0.id.toLowerCase()
     let token1Address = token1.id.toLowerCase()
     
-    if (token0Address == USDT_ADDRESS || token0Address == BUSD_ADDRESS || token0Address == USDC_ADDRESS) {
+    if (token0Address == USDT_ADDRESS || token0Address == BUSD_ADDRESS || token0Address == USDC_ADDRESS || token0Address == USD1_ADDRESS || token0Address == USDS_ADDRESS) {
       pair.reserveUSD = pair.reserve0.times(BigDecimal.fromString('2'))
       token1.derivedUSD = pair.token1Price
-    } else if (token1Address == USDT_ADDRESS || token1Address == BUSD_ADDRESS || token1Address == USDC_ADDRESS) {
+    } else if (token1Address == USDT_ADDRESS || token1Address == BUSD_ADDRESS || token1Address == USDC_ADDRESS || token1Address == USD1_ADDRESS || token1Address == USDS_ADDRESS) {
       pair.reserveUSD = pair.reserve1.times(BigDecimal.fromString('2'))
       token0.derivedUSD = pair.token0Price
     } else if (token0Address == WBNB_ADDRESS && bundle.bnbPrice.gt(ZERO_BD)) {
@@ -86,11 +88,11 @@ export function handleSync(event: Sync): void {
 
     // Update BNB price if this is WBNB/stablecoin pair
     if (token0Address == WBNB_ADDRESS && 
-        (token1Address == USDT_ADDRESS || token1Address == BUSD_ADDRESS || token1Address == USDC_ADDRESS)) {
+        (token1Address == USDT_ADDRESS || token1Address == BUSD_ADDRESS || token1Address == USDC_ADDRESS || token1Address == USD1_ADDRESS || token1Address == USDS_ADDRESS)) {
       bundle.bnbPrice = pair.token1Price
       bundle.save()
     } else if (token1Address == WBNB_ADDRESS && 
-        (token0Address == USDT_ADDRESS || token0Address == BUSD_ADDRESS || token0Address == USDC_ADDRESS)) {
+        (token0Address == USDT_ADDRESS || token0Address == BUSD_ADDRESS || token0Address == USDC_ADDRESS || token0Address == USD1_ADDRESS || token0Address == USDS_ADDRESS)) {
       bundle.bnbPrice = pair.token0Price
       bundle.save()
     }

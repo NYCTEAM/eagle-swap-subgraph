@@ -13,6 +13,8 @@ let FACTORY_ADDRESS_V3 = '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865'
 let USDT_ADDRESS = '0x55d398326f99059ff775485246999027b3197955'
 let BUSD_ADDRESS = '0xe9e7cea3dedca5984780bafc599bd69add087d56'
 let USDC_ADDRESS = '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d'
+let USD1_ADDRESS = '0x8d0d000ee44948fc98c9b98a4fa4921476f08b0d'
+let USDS_ADDRESS = '0xce24439f2d9c6a2289f741120fe202248b666666'
 
 function exponentToBigDecimal(decimals: BigInt): BigDecimal {
   let bd = BigDecimal.fromString('1')
@@ -89,9 +91,9 @@ export function handleSwapV3(event: SwapEvent): void {
     let token0Address = token0.id.toLowerCase()
     let token1Address = token1.id.toLowerCase()
     
-    if (token0Address == USDT_ADDRESS || token0Address == BUSD_ADDRESS || token0Address == USDC_ADDRESS) {
+    if (token0Address == USDT_ADDRESS || token0Address == BUSD_ADDRESS || token0Address == USDC_ADDRESS || token0Address == USD1_ADDRESS || token0Address == USDS_ADDRESS) {
       amountUSD = amount0
-    } else if (token1Address == USDT_ADDRESS || token1Address == BUSD_ADDRESS || token1Address == USDC_ADDRESS) {
+    } else if (token1Address == USDT_ADDRESS || token1Address == BUSD_ADDRESS || token1Address == USDC_ADDRESS || token1Address == USD1_ADDRESS || token1Address == USDS_ADDRESS) {
       amountUSD = amount1
     } else if (token0.derivedUSD.gt(ZERO_BD)) {
       amountUSD = amount0.times(token0.derivedUSD)
