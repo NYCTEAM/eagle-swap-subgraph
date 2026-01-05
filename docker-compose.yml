@@ -1,5 +1,14 @@
 version: '3.8'
 
+# =====================================================
+# Eagle Swap Subgraph - Coolify Compatible
+# =====================================================
+# 部署说明：
+# 1. 在 Coolify 选择 Docker Compose 部署
+# 2. 连接 GitHub 仓库
+# 3. 设置环境变量 BSC_RPC（可选）
+# =====================================================
+
 services:
   graph-node:
     image: graphprotocol/graph-node:v0.34.1
@@ -11,36 +20,52 @@ services:
       - '8030:8030'   # Index node
       - '8040:8040'   # Metrics
     depends_on:
-      - ipfs
-      - postgres
+      postgres:
+        condition: service_healthy
+      ipfs:
+        condition: service_started
     environment:
       postgres_host: postgres
       postgres_user: graph-node
-      postgres_pass: let-me-in
+      postgres_pass: ${POSTGRES_PASSWORD:-let-me-in}
       postgres_db: graph-node
       ipfs: 'ipfs:5001'
-      # 使用你自己的 BSC 节点
-      ethereum: 'bsc:https://RPC1.eagleswaps.com/BSC'
-      GRAPH_LOG: info
+      # BSC RPC - 可通过环境变量覆盖
+      ethereum: 'bsc:${BSC_RPC:-https://RPC1.eagleswaps.com/BSC}'
+      GRAPH_LOG: ${GRAPH_LOG:-info}
       GRAPH_ETHEREUM_CLEANUP_BLOCKS: 'true'
       ETHEREUM_REORG_THRESHOLD: 50
       ETHEREUM_ANCESTOR_COUNT: 50
+      # 性能优化
+      GRAPH_ETHEREUM_MAX_BLOCK_RANGE_SIZE: 500
+      GRAPH_ETHEREUM_TARGET_TRIGGERS_PER_BLOCK_RANGE: 100
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8030"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
     logging:
       driver: json-file
       options:
         max-size: "100m"
         max-file: "3"
+    networks:
+      - subgraph-network
 
   ipfs:
     image: ipfs/kubo:v0.27.0
     container_name: eagle-ipfs
     ports:
       - '5001:5001'   # API
-      - '5002:8080'   # Gateway (changed to avoid conflict)
+      - '5002:8080'   # Gateway
     volumes:
-      - ./data/ipfs:/data/ipfs
+      - ipfs_data:/data/ipfs
+    environment:
+      IPFS_PROFILE: server
     restart: unless-stopped
+    networks:
+      - subgraph-network
 
   postgres:
     image: postgres:15-alpine
@@ -51,15 +76,30 @@ services:
       - "postgres"
       - "-cshared_preload_libraries=pg_stat_statements"
       - "-cmax_connections=200"
+      - "-cwork_mem=64MB"
+      - "-cmaintenance_work_mem=256MB"
     environment:
       POSTGRES_USER: graph-node
-      POSTGRES_PASSWORD: let-me-in
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-let-me-in}
       POSTGRES_DB: graph-node
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U graph-node -d graph-node"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - subgraph-network
+
+networks:
+  subgraph-network:
+    driver: bridge
 
 volumes:
   postgres_data:
+    driver: local
   ipfs_data:
+    driver: local
