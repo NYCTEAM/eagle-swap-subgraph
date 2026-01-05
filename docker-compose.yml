@@ -30,12 +30,9 @@ services:
       postgres_pass: ${POSTGRES_PASSWORD:-let-me-in}
       postgres_db: graph-node
       ipfs: 'ipfs:5001'  # Internal Docker network port (not host port)
-      # BSC RPC - 使用 Archive 节点 (自己的节点不支持历史状态查询)
-      # 可选 Archive RPC: 
-      # - https://bsc-dataseed.binance.org (免费但有限制)
-      # - https://rpc.ankr.com/bsc (免费)
-      # - https://bsc.publicnode.com (免费)
-      ethereum: 'bsc:https://bsc.publicnode.com'
+      # BSC RPC - 使用 Archive 节点
+      # Ankr 提供免费 Archive RPC
+      ethereum: 'bsc:https://rpc.ankr.com/bsc'
       GRAPH_LOG: ${GRAPH_LOG:-info}
       GRAPH_ETHEREUM_CLEANUP_BLOCKS: 'true'
       ETHEREUM_REORG_THRESHOLD: 50
