@@ -14,11 +14,11 @@ services:
     image: graphprotocol/graph-node:v0.34.1
     container_name: eagle-graph-node
     ports:
-      - '8000:8000'   # GraphQL HTTP
-      - '8001:8001'   # GraphQL WebSocket
-      - '8020:8020'   # JSON-RPC (admin)
-      - '8030:8030'   # Index node
-      - '8040:8040'   # Metrics
+      - '8100:8000'   # GraphQL HTTP (changed from 8000)
+      - '8101:8001'   # GraphQL WebSocket
+      - '8120:8020'   # JSON-RPC (admin)
+      - '8130:8030'   # Index node
+      - '8140:8040'   # Metrics
     depends_on:
       postgres:
         condition: service_healthy
@@ -41,7 +41,7 @@ services:
       GRAPH_ETHEREUM_TARGET_TRIGGERS_PER_BLOCK_RANGE: 100
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8030"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 30s
       timeout: 10s
       retries: 5
