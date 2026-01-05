@@ -30,8 +30,8 @@ services:
       postgres_pass: ${POSTGRES_PASSWORD:-let-me-in}
       postgres_db: graph-node
       ipfs: 'ipfs:5001'  # Internal Docker network port (not host port)
-      # BSC RPC - 使用官方 Archive 节点
-      ethereum: 'bsc:https://bsc-dataseed1.binance.org'
+      # BSC RPC - 使用 QuickNode Archive 节点
+      ethereum: 'bsc:https://orbital-patient-dawn.bsc.quiknode.pro/e8d16ae592052dff62c8864fdffca477ccc7eb8e/'
       GRAPH_LOG: ${GRAPH_LOG:-info}
       GRAPH_ETHEREUM_CLEANUP_BLOCKS: 'true'
       ETHEREUM_REORG_THRESHOLD: 50

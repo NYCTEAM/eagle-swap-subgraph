@@ -9,7 +9,7 @@ dataSources:
     source:
       address: "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
       abi: PancakeFactoryV2
-      startBlock: 74100000
+      startBlock: 71552000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -36,7 +36,7 @@ dataSources:
     source:
       address: "0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865"
       abi: PancakeFactoryV3
-      startBlock: 74100000
+      startBlock: 71552000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
