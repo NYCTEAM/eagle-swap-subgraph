@@ -1,0 +1,137 @@
+# Token entity
+type Token @entity {
+  id: ID!                           # Token address
+  symbol: String!
+  name: String!
+  decimals: BigInt!
+  totalSupply: BigDecimal!
+  tradeVolume: BigDecimal!
+  tradeVolumeUSD: BigDecimal!
+  txCount: BigInt!
+  totalLiquidity: BigDecimal!
+  derivedBNB: BigDecimal!           # Price in BNB
+  derivedUSD: BigDecimal!           # Price in USD
+  pairs: [Pair!]! @derivedFrom(field: "token0")
+  pairsAsToken1: [Pair!]! @derivedFrom(field: "token1")
+}
+
+# Trading Pair entity
+type Pair @entity {
+  id: ID!                           # Pair address
+  token0: Token!
+  token1: Token!
+  reserve0: BigDecimal!
+  reserve1: BigDecimal!
+  totalSupply: BigDecimal!
+  reserveBNB: BigDecimal!
+  reserveUSD: BigDecimal!
+  trackedReserveBNB: BigDecimal!
+  token0Price: BigDecimal!          # token1 per token0
+  token1Price: BigDecimal!          # token0 per token1
+  volumeToken0: BigDecimal!
+  volumeToken1: BigDecimal!
+  volumeUSD: BigDecimal!
+  txCount: BigInt!
+  createdAtTimestamp: BigInt!
+  createdAtBlockNumber: BigInt!
+  liquidityProviderCount: BigInt!
+  # Sync events
+  syncCount: BigInt!
+  lastSyncTimestamp: BigInt!
+  lastSyncBlock: BigInt!
+}
+
+# Swap transaction
+type Swap @entity {
+  id: ID!                           # tx hash + log index
+  transaction: Transaction!
+  timestamp: BigInt!
+  pair: Pair!
+  sender: Bytes!
+  from: Bytes!
+  to: Bytes!
+  amount0In: BigDecimal!
+  amount1In: BigDecimal!
+  amount0Out: BigDecimal!
+  amount1Out: BigDecimal!
+  amountUSD: BigDecimal!
+  logIndex: BigInt!
+}
+
+# Sync event (reserve updates)
+type Sync @entity {
+  id: ID!                           # tx hash + log index
+  pair: Pair!
+  reserve0: BigDecimal!
+  reserve1: BigDecimal!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+}
+
+# Transaction
+type Transaction @entity {
+  id: ID!                           # tx hash
+  blockNumber: BigInt!
+  timestamp: BigInt!
+  swaps: [Swap!]! @derivedFrom(field: "transaction")
+}
+
+# Factory stats
+type PancakeFactory @entity {
+  id: ID!                           # Factory address
+  pairCount: Int!
+  totalVolumeUSD: BigDecimal!
+  totalVolumeBNB: BigDecimal!
+  totalLiquidityUSD: BigDecimal!
+  totalLiquidityBNB: BigDecimal!
+  txCount: BigInt!
+}
+
+# Bundle for BNB price
+type Bundle @entity {
+  id: ID!
+  bnbPrice: BigDecimal!             # BNB price in USD
+}
+
+# Hourly pair data for charts
+type PairHourData @entity {
+  id: ID!                           # pair address + hour timestamp
+  hourStartUnix: Int!
+  pair: Pair!
+  reserve0: BigDecimal!
+  reserve1: BigDecimal!
+  reserveUSD: BigDecimal!
+  hourlyVolumeToken0: BigDecimal!
+  hourlyVolumeToken1: BigDecimal!
+  hourlyVolumeUSD: BigDecimal!
+  hourlyTxns: BigInt!
+}
+
+# Daily pair data
+type PairDayData @entity {
+  id: ID!                           # pair address + day timestamp
+  date: Int!
+  pair: Pair!
+  reserve0: BigDecimal!
+  reserve1: BigDecimal!
+  reserveUSD: BigDecimal!
+  dailyVolumeToken0: BigDecimal!
+  dailyVolumeToken1: BigDecimal!
+  dailyVolumeUSD: BigDecimal!
+  dailyTxns: BigInt!
+}
+
+# Token day data
+type TokenDayData @entity {
+  id: ID!
+  date: Int!
+  token: Token!
+  dailyVolumeToken: BigDecimal!
+  dailyVolumeUSD: BigDecimal!
+  dailyVolumeBNB: BigDecimal!
+  dailyTxns: BigInt!
+  totalLiquidityToken: BigDecimal!
+  totalLiquidityBNB: BigDecimal!
+  totalLiquidityUSD: BigDecimal!
+  priceUSD: BigDecimal!
+}

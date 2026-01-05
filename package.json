@@ -1,0 +1,22 @@
+{
+  "name": "eagle-swap-subgraph",
+  "version": "1.0.0",
+  "description": "Eagle Swap Subgraph - PancakeSwap V2/V3 liquidity indexer for BSC",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy:local": "graph deploy --node http://localhost:8020/ eagle-swap/pancakeswap",
+    "create:local": "graph create --node http://localhost:8020/ eagle-swap/pancakeswap",
+    "remove:local": "graph remove --node http://localhost:8020/ eagle-swap/pancakeswap",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f graph-node"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "^0.68.0",
+    "@graphprotocol/graph-ts": "^0.32.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

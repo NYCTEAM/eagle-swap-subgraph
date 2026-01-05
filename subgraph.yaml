@@ -1,0 +1,57 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  # PancakeSwap V2 Factory
+  - kind: ethereum
+    name: PancakeFactoryV2
+    network: bsc
+    source:
+      address: "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"
+      abi: PancakeFactoryV2
+      startBlock: 6809737
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Pair
+        - Token
+      abis:
+        - name: PancakeFactoryV2
+          file: ./abis/PancakeFactoryV2.json
+        - name: PancakePairV2
+          file: ./abis/PancakePairV2.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: PairCreated(indexed address,indexed address,address,uint256)
+          handler: handlePairCreated
+      file: ./src/factory.ts
+
+templates:
+  # PancakeSwap V2 Pair Template
+  - kind: ethereum
+    name: PancakePairV2
+    network: bsc
+    source:
+      abi: PancakePairV2
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Pair
+        - Swap
+        - Sync
+      abis:
+        - name: PancakePairV2
+          file: ./abis/PancakePairV2.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Sync(uint112,uint112)
+          handler: handleSync
+        - event: Swap(indexed address,uint256,uint256,uint256,uint256,indexed address)
+          handler: handleSwap
+      file: ./src/pair.ts
