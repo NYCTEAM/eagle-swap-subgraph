@@ -135,3 +135,54 @@ type TokenDayData @entity {
   totalLiquidityUSD: BigDecimal!
   priceUSD: BigDecimal!
 }
+
+# =====================================================
+# PancakeSwap V3 Entities
+# =====================================================
+
+# V3 Pool entity
+type PoolV3 @entity {
+  id: ID!                           # Pool address
+  token0: Token!
+  token1: Token!
+  feeTier: BigInt!                  # Fee tier (100, 500, 2500, 10000)
+  liquidity: BigInt!
+  sqrtPriceX96: BigInt!
+  tick: BigInt!
+  token0Price: BigDecimal!
+  token1Price: BigDecimal!
+  volumeToken0: BigDecimal!
+  volumeToken1: BigDecimal!
+  volumeUSD: BigDecimal!
+  txCount: BigInt!
+  totalValueLockedToken0: BigDecimal!
+  totalValueLockedToken1: BigDecimal!
+  totalValueLockedUSD: BigDecimal!
+  createdAtTimestamp: BigInt!
+  createdAtBlockNumber: BigInt!
+}
+
+# V3 Swap entity
+type SwapV3 @entity {
+  id: ID!
+  transaction: Transaction!
+  timestamp: BigInt!
+  pool: PoolV3!
+  sender: Bytes!
+  recipient: Bytes!
+  amount0: BigDecimal!
+  amount1: BigDecimal!
+  amountUSD: BigDecimal!
+  sqrtPriceX96: BigInt!
+  tick: BigInt!
+  logIndex: BigInt!
+}
+
+# V3 Factory
+type PancakeFactoryV3 @entity {
+  id: ID!
+  poolCount: Int!
+  totalVolumeUSD: BigDecimal!
+  totalValueLockedUSD: BigDecimal!
+  txCount: BigInt!
+}
