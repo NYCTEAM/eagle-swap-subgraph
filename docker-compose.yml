@@ -29,9 +29,9 @@ services:
       postgres_user: graph-node
       postgres_pass: ${POSTGRES_PASSWORD:-let-me-in}
       postgres_db: graph-node
-      ipfs: 'ipfs:5001'
-      # BSC RPC - 可通过环境变量覆盖
-      ethereum: 'bsc:${BSC_RPC:-https://RPC1.eagleswaps.com/BSC}'
+      ipfs: 'ipfs:5001'  # Internal Docker network port (not host port)
+      # BSC RPC - 使用自己的节点
+      ethereum: 'bsc:https://RPC1.eagleswaps.com/BSC'
       GRAPH_LOG: ${GRAPH_LOG:-info}
       GRAPH_ETHEREUM_CLEANUP_BLOCKS: 'true'
       ETHEREUM_REORG_THRESHOLD: 50
@@ -57,8 +57,8 @@ services:
     image: ipfs/kubo:v0.27.0
     container_name: eagle-ipfs
     ports:
-      - '5001:5001'   # API
-      - '5002:8080'   # Gateway
+      - '5011:5001'   # API (changed from 5001 to avoid conflict)
+      - '5012:8080'   # Gateway
     volumes:
       - ipfs_data:/data/ipfs
     environment:
