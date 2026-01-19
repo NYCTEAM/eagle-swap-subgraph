@@ -45,8 +45,14 @@ npm run deploy:local
 在 `docker-compose.yml` 中配置你的 BSC 节点：
 
 ```yaml
-ethereum: 'bsc:https://RPC1.eagleswaps.com/BSC'
+# 使用本地 RPC 节点 (8545 端口)
+ethereum: 'bsc:http://host.docker.internal:8545/'
+
+# 或使用远程 RPC
+# ethereum: 'bsc:https://RPC1.eagleswaps.com/BSC'
 ```
+
+**注意**: `host.docker.internal` 允许 Docker 容器访问宿主机的端口。
 
 ### 起始区块
 
@@ -141,7 +147,12 @@ query {
 ### Graph Node 无法连接 RPC
 
 ```bash
-# 检查 RPC 是否可用
+# 检查本地 RPC 是否可用
+curl -X POST http://localhost:8545 \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'
+
+# 或检查远程 RPC
 curl -X POST https://RPC1.eagleswaps.com/BSC \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'

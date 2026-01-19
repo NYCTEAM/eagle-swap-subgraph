@@ -1,12 +1,10 @@
 version: '3.8'
 
 # =====================================================
-# Eagle Swap Subgraph - Coolify Compatible
+# Eagle Swap Subgraph - 系统盘版本
 # =====================================================
-# 部署说明：
-# 1. 在 Coolify 选择 Docker Compose 部署
-# 2. 连接 GitHub 仓库
-# 3. 设置环境变量 BSC_RPC（可选）
+# 适用于 1.5TB 系统盘
+# 数据存储在 /opt/subgraph
 # =====================================================
 
 services:
@@ -14,7 +12,7 @@ services:
     image: graphprotocol/graph-node:v0.34.1
     container_name: eagle-graph-node
     ports:
-      - '8100:8000'   # GraphQL HTTP (changed from 8000)
+      - '8100:8000'   # GraphQL HTTP
       - '8101:8001'   # GraphQL WebSocket
       - '8120:8020'   # JSON-RPC (admin)
       - '8130:8030'   # Index node
@@ -29,7 +27,7 @@ services:
       postgres_user: graph-node
       postgres_pass: ${POSTGRES_PASSWORD:-let-me-in}
       postgres_db: graph-node
-      ipfs: 'ipfs:5001'  # Internal Docker network port (not host port)
+      ipfs: 'ipfs:5001'
       # BSC RPC - 使用本地 RPC 节点 (8545 端口)
       ethereum: 'bsc:http://host.docker.internal:8545/'
       GRAPH_LOG: ${GRAPH_LOG:-info}
@@ -39,6 +37,8 @@ services:
       # 性能优化
       GRAPH_ETHEREUM_MAX_BLOCK_RANGE_SIZE: 500
       GRAPH_ETHEREUM_TARGET_TRIGGERS_PER_BLOCK_RANGE: 100
+    volumes:
+      - /opt/subgraph/graph-node:/var/lib/graph-node
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000"]
@@ -57,10 +57,10 @@ services:
     image: ipfs/kubo:v0.27.0
     container_name: eagle-ipfs
     ports:
-      - '5011:5001'   # API (changed from 5001 to avoid conflict)
+      - '5011:5001'   # API
       - '5012:8080'   # Gateway
     volumes:
-      - ipfs_data:/data/ipfs
+      - /opt/subgraph/ipfs:/data/ipfs
     environment:
       IPFS_PROFILE: server
     restart: unless-stopped
@@ -71,13 +71,16 @@ services:
     image: postgres:15-alpine
     container_name: eagle-postgres
     ports:
-      - '5433:5432'   # Changed to avoid conflict
+      - '5433:5432'
     command:
       - "postgres"
       - "-cshared_preload_libraries=pg_stat_statements"
       - "-cmax_connections=200"
       - "-cwork_mem=64MB"
       - "-cmaintenance_work_mem=256MB"
+      # 系统盘优化配置
+      - "-cshared_buffers=1GB"
+      - "-ceffective_cache_size=2GB"
     environment:
       POSTGRES_USER: graph-node
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-let-me-in}
@@ -87,7 +90,7 @@ services:
       LC_ALL: C
       LANG: C
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - /opt/subgraph/postgres:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U graph-node -d graph-node"]
@@ -101,8 +104,5 @@ networks:
   subgraph-network:
     driver: bridge
 
-volumes:
-  postgres_data:
-    driver: local
-  ipfs_data:
-    driver: local
+# 注意: 不使用 Docker volumes，直接挂载主机目录
+# 这样可以更好地控制磁盘空间使用
