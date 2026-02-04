@@ -36,10 +36,14 @@ services:
       GRAPH_ETHEREUM_CLEANUP_BLOCKS: 'true'
       ETHEREUM_REORG_THRESHOLD: 50
       ETHEREUM_ANCESTOR_COUNT: 50
-      # 性能优化 - 降低批处理大小避免 exceed max addresses
-      GRAPH_ETHEREUM_MAX_BLOCK_RANGE_SIZE: 10
-      GRAPH_ETHEREUM_TARGET_TRIGGERS_PER_BLOCK_RANGE: 20
-      GRAPH_ETHEREUM_BLOCK_BATCH_SIZE: 10
+      # 性能优化 - 提高同步速度，确保实时跟上最新区块
+      GRAPH_ETHEREUM_MAX_BLOCK_RANGE_SIZE: 100
+      GRAPH_ETHEREUM_TARGET_TRIGGERS_PER_BLOCK_RANGE: 100
+      GRAPH_ETHEREUM_BLOCK_BATCH_SIZE: 50
+      # 并行处理
+      GRAPH_ETHEREUM_PARALLEL_BLOCK_RANGES: 10
+      # 轮询间隔（毫秒）- 更快检测新区块
+      GRAPH_ETHEREUM_POLLING_INTERVAL: 500
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000"]
