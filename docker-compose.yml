@@ -30,8 +30,8 @@ services:
       postgres_pass: ${POSTGRES_PASSWORD:-let-me-in}
       postgres_db: graph-node
       ipfs: 'ipfs:5001'  # Internal Docker network port (not host port)
-      # BSC RPC - 使用本地 RPC 节点 (8545 端口)
-      ethereum: 'bsc:http://host.docker.internal:8545/'
+      # BSC RPC - 使用域名访问
+      ethereum: 'bsc:https://bsc.eagleswap.io/'
       GRAPH_LOG: ${GRAPH_LOG:-info}
       GRAPH_ETHEREUM_CLEANUP_BLOCKS: 'true'
       ETHEREUM_REORG_THRESHOLD: 50
