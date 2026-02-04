@@ -105,5 +105,13 @@ networks:
 volumes:
   postgres_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /root/eagle-swap-subgraph/data/postgres
   ipfs_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /root/eagle-swap-subgraph/data/ipfs
