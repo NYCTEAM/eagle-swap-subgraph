@@ -5,7 +5,7 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy:local": "graph deploy --node http://localhost:8120/ --ipfs http://localhost:5011 eagle-swap/pancakeswap --version-label v0.0.1",
+    "deploy:local": "graph deploy --node http://localhost:8120/ --ipfs http://localhost:5011 eagle-swap/pancakeswap --version-label v0.0.2",
     "create:local": "graph create --node http://localhost:8120/ eagle-swap/pancakeswap",
     "remove:local": "graph remove --node http://localhost:8120/ eagle-swap/pancakeswap",
     "docker:up": "docker-compose up -d",
